@@ -1,0 +1,10 @@
+.vs/cl_core/v15/.suo
+.vs/cl_core/v15/*
+Core.Tests/bin/*
+Core.Tests/obj/*
+Core/.vs/Core/v15/.suo
+Core/bin/Debug/*
+Core/bin/Release/*
+Core/obj/Debug/*
+Core/obj/Release/*
+Core/obj/*
