@@ -4,12 +4,8 @@ namespace Data.EntityFramework
 {
     // This class should be extended to implement application specific DbSet's
 
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext<TContext> : DbContext where TContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
-
-        //public DbSet<Account> Accounts { get; set; }
-
-        //public DbSet<Institution> Institutions { get; set; }
+        public ApplicationDbContext(DbContextOptions<TContext> options) : base(options) { }
     }
 }
