@@ -10,8 +10,8 @@ namespace Data.EntityFramework.Extensions
                 case "IntegrationTesting":
                     optionsBuilder.UseSqlite(connectionString);
                     break;
-                case "Development":
-                case "Production":
+                case "Development": //TODO - make this more specific to postgres just incase you want to change out the DB type 
+                case "Production": //TODO - make this more specific to postgres just incase you want to change out the DB type 
                     optionsBuilder.UseNpgsql(connectionString);
                     break;
                 default:

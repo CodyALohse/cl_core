@@ -7,10 +7,11 @@ using System.Linq.Expressions;
 using Core;
 using Data.EntityFramework.Extensions;
 using Microsoft.AspNetCore.Hosting;
+using Core.Data.EntityFramework;
 
 namespace Data.EntityFramework
 {
-    public class EntityContextProvider : IContextProvider
+    public class EntityContextProvider<TContext> : IContextProvider where TContext : DbContext
     {
         private DbContext Context {get; set;}
 
@@ -18,9 +19,12 @@ namespace Data.EntityFramework
 
         private readonly IHostingEnvironment HostingEnvironment;
 
-        public EntityContextProvider(IConfiguration configuration, IHostingEnvironment hostingEnvironment){
+        private IDbContextFactory<TContext> DbContextFactory;
+
+        public EntityContextProvider(IConfiguration configuration, IHostingEnvironment hostingEnvironment, IDbContextFactory<TContext> dbContextFactory){
             this.Configuration = configuration;
             this.HostingEnvironment = hostingEnvironment;
+            this.DbContextFactory = dbContextFactory;
         }
 
         private DbContext ApplicationContext
@@ -29,19 +33,21 @@ namespace Data.EntityFramework
             {
                 if (this.Context == null)
                 {
-                    var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-                    optionsBuilder.GetDbProvider(this.HostingEnvironment.EnvironmentName, this.Configuration["ConnectionStrings:DefaultConnection"]);
+                    this.Context = this.DbContextFactory.CreateDbContext();
+                    
+                    //var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+                    //optionsBuilder.GetDbProvider(this.HostingEnvironment.EnvironmentName, this.Configuration["ConnectionStrings:DefaultConnection"]);
 
-                    this.Context = new ApplicationDbContext(optionsBuilder.Options);
+                    //this.Context = new ApplicationDbContext(optionsBuilder.Options);
 
-                    // TODO this should be moved to the testing class instead of here
-                    // TODO not sure right now if it runs the latest migration?
-                    if (this.HostingEnvironment.EnvironmentName.Equals("IntegrationTesting"))
-                    {
-                        // Delete the database per test. This wil probably cause horrible integration testing latency if many tests are to be run
-                        this.Context.Database.EnsureDeleted();
-                        this.Context.Database.Migrate();
-                    }
+                    //// TODO this should be moved to the testing class instead of here
+                    //// TODO not sure right now if it runs the latest migration?
+                    //if (this.HostingEnvironment.EnvironmentName.Equals("IntegrationTesting"))
+                    //{
+                    //    // Delete the database per test. This wil probably cause horrible integration testing latency if many tests are to be run
+                    //    this.Context.Database.EnsureDeleted();
+                    //    this.Context.Database.Migrate();
+                    //}
                 }
 
                 return this.Context;
